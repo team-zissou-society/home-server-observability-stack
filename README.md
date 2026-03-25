@@ -2,25 +2,25 @@
 
 A complete monitoring, logging, and alerting solution for Docker-based homelabs. Provides metrics collection, log aggregation, visualization, and automatic container recovery in a single `docker-compose` deployment.
 
-**This is a template for your own deployment.** You will need to configure it with your own credentials, domain, and alert targets before using.
+This is a template for your own deployment. You will need to configure it with your own credentials, domain, and alert targets before using.
 
 ## Quick Links
 
-- **Blog post**: [Building a Production-Grade Observability Stack for My Homelab](https://example.com/blog) — detailed walkthrough of the architecture and lessons learned
-- **GitHub**: [home-server-observability-stack](https://github.com/your-org/home-server-observability-stack)
-- **Issues**: [Report bugs or ask questions](https://github.com/your-org/home-server-observability-stack/issues)
+- Blog post: [Building a Production-Grade Observability Stack for My Homelab](https://toddco.xyz/post/observability-stack--for-my-homelab/) — detailed walkthrough of the architecture and lessons learned
+- GitHub: [home-server-observability-stack](https://github.com/team-zissou-society/home-server-observability-stack)
+- Issues: [Report bugs or ask questions](https://github.com/team-zissou-society/home-server-observability-stack/issues)
 
 ## What's Included
 
-- **Prometheus** — time-series metrics collection and short-term storage (30 days)
-- **Grafana** — dashboards and visualization (uses Prometheus + Loki)
-- **Loki + Promtail** — log aggregation and searching
-- **Alertmanager** — alert routing and delivery (email, webhooks, etc.)
-- **Node Exporter** — host-level metrics (CPU, memory, disk, network)
-- **cAdvisor** — container-level metrics (memory, CPU, I/O)
-- **DCGM Exporter** — NVIDIA GPU metrics (utilization, VRAM, temperature)
-- **Uptime Kuma** — HTTP/TCP health checks for external services
-- **Autoheal** — automatic container restart on failed health checks
+- Prometheus — time-series metrics collection and short-term storage (30 days)
+- Grafana — dashboards and visualization (uses Prometheus + Loki)
+- Loki + Promtail — log aggregation and searching
+- Alertmanager — alert routing and delivery (email, webhooks, etc.)
+- Node Exporter — host-level metrics (CPU, memory, disk, network)
+- cAdvisor — container-level metrics (memory, CPU, I/O)
+- DCGM Exporter — NVIDIA GPU metrics (utilization, VRAM, temperature)
+- Uptime Kuma — HTTP/TCP health checks for external services
+- Autoheal — automatic container restart on failed health checks
 
 ## Prerequisites
 
@@ -30,36 +30,36 @@ A complete monitoring, logging, and alerting solution for Docker-based homelabs.
 
 ## Quick Start
 
-**IMPORTANT**: Before starting, follow these security steps:
+IMPORTANT: Before starting, follow these security steps:
 
-1. **Never commit `.env` to git** — it's in `.gitignore` to prevent accidental secret exposure
-2. **Set strong passwords** — change all placeholder values in `.env`
-3. **Rotate credentials if this repo was exposed** — regenerate webhooks, passwords, SMTP credentials
+- Never commit `.env` to git — it's in `.gitignore` to prevent accidental secret exposure
+- Set strong passwords — change all placeholder values in `.env`
+- Rotate credentials if this repo was exposed — regenerate webhooks, passwords, SMTP credentials
 
 ### Setup Steps
 
-1. **Clone or navigate to the observability stack directory:**
+1. Clone or navigate to the observability stack directory:
    ```bash
    cd observabillity_stack
    ```
 
-2. **Create `.env` from the template:**
+2. Create `.env` from the template:
    ```bash
    cp .env.example .env
    ```
 
-3. **Edit `.env` and set required values:**
+3. Edit `.env` and set required values:
    ```bash
    GRAFANA_ADMIN_PASSWORD=your_secure_password
    GRAFANA_DOMAIN=localhost  # or your actual domain
    ```
 
-4. **Start the stack:**
+4. Start the stack:
    ```bash
    docker compose up -d
    ```
 
-5. **Verify services are healthy:**
+5. Verify services are healthy:
    ```bash
    docker compose ps
    ```
@@ -68,13 +68,13 @@ A complete monitoring, logging, and alerting solution for Docker-based homelabs.
 
 | Service | URL | Default Credentials |
 |---------|-----|-------------------|
-| **Grafana** | http://localhost:3000 | admin / (see .env) |
-| **Prometheus** | http://localhost:9090 | none |
-| **Alertmanager** | http://localhost:9093 | none |
-| **Uptime Kuma** | http://localhost:3001 | setup on first visit |
-| **Node Exporter** | http://localhost:9100/metrics | metrics only |
-| **cAdvisor** | http://localhost:8081 | none |
-| **Loki** | http://localhost:3100 | metrics/api only |
+| Grafana | http://localhost:3000 | admin / (see .env) |
+| Prometheus | http://localhost:9090 | none |
+| Alertmanager | http://localhost:9093 | none |
+| Uptime Kuma | http://localhost:3001 | setup on first visit |
+| Node Exporter | http://localhost:9100/metrics | metrics only |
+| cAdvisor | http://localhost:8081 | none |
+| Loki | http://localhost:3100 | metrics/api only |
 
 ## Directory Structure
 
@@ -124,10 +124,10 @@ Add additional scrape targets here.
 ### Alert Rules (config/prometheus/alerts.yml)
 
 Contains alert rules for:
-- **System alerts** — high CPU, high memory, low disk space
-- **Container alerts** — restart loops, high CPU, high memory (with memory limit guard)
-- **GPU alerts** — NVENC overload, high temperature, high memory
-- **Service alerts** — targets down, Prometheus scrape failures
+- System alerts — high CPU, high memory, low disk space
+- Container alerts — restart loops, high CPU, high memory (with memory limit guard)
+- GPU alerts — NVENC overload, high temperature, high memory
+- Service alerts — targets down, Prometheus scrape failures
 
 Edit threshold values (e.g., CPU > 90%, memory > 90%) here.
 
@@ -147,25 +147,25 @@ Defines which logs to collect. By default collects Docker container logs and sys
 
 Recommended community dashboards to import:
 
-1. **Node Exporter Full** (ID: 1860)
+1. Node Exporter Full (ID: 1860)
    - Host CPU, memory, disk, network
    - Most important dashboard for overall system health
 
-2. **Docker Container Monitoring** (ID: 893)
+2. Docker Container Monitoring (ID: 893)
    - Per-container CPU, memory, restarts
    - Network I/O and filesystem usage
 
-3. **NVIDIA GPU Metrics** (ID: 12239)
+3. NVIDIA GPU Metrics (ID: 12239)
    - GPU utilization, VRAM, temperature, power draw
    - Only needed if you have NVIDIA GPUs
 
 ### Importing Dashboards
 
-1. Go to Grafana → **Dashboards** (or **+** icon)
-2. Click **Import**
+1. Go to Grafana → Dashboards (or + icon)
+2. Click Import
 3. Enter dashboard ID above
-4. Select **Prometheus** datasource
-5. Click **Import**
+4. Select Prometheus datasource
+5. Click Import
 
 ## Known Issues & Gotchas
 
@@ -235,7 +235,7 @@ Imported dashboards reference datasources by UID. If the UID doesn't match, pane
 
 ### Grafana dashboards show no data
 
-1. Check datasource configuration — go to **Configuration → Data Sources**
+1. Check datasource configuration — go to Configuration → Data Sources
 2. Verify datasource UID matches what dashboards expect (usually `DS_PROMETHEUS` or `prometheus`)
 3. Test the connection (red/green indicator on datasource page)
 
@@ -309,12 +309,12 @@ At steady state with 20+ other Docker services running:
 
 ### For Your Deployment
 
-- **Change all `.env` values** — the `.env.example` file contains placeholders, not real credentials
-- **Grafana admin password** — Set a strong password (16+ characters) in `.env` before first run
-- **Disable Grafana sign-ups** — `GF_USERS_ALLOW_SIGN_UP=false` (enabled by default) if exposed to network
-- **Keep Prometheus/Alertmanager behind firewall** — These should not be directly internet-exposed; use a reverse proxy (nginx, Traefik) with authentication
-- **Use HTTPS for Grafana** — Configure reverse proxy with TLS for production deployments
-- **Rotate credentials regularly** — Change Grafana password, regenerate Discord webhooks, rotate SMTP credentials
+- Change all `.env` values — the `.env.example` file contains placeholders, not real credentials
+- Grafana admin password — Set a strong password (16+ characters) in `.env` before first run
+- Disable Grafana sign-ups — `GF_USERS_ALLOW_SIGN_UP=false` (enabled by default) if exposed to network
+- Keep Prometheus/Alertmanager behind firewall — These should not be directly internet-exposed; use a reverse proxy (nginx, Traefik) with authentication
+- Use HTTPS for Grafana — Configure reverse proxy with TLS for production deployments
+- Rotate credentials regularly — Change Grafana password, regenerate Discord webhooks, rotate SMTP credentials
 
 ### Secrets Management
 
@@ -328,10 +328,10 @@ At steady state with 20+ other Docker services running:
 
 ### External Services
 
-- **Discord webhooks** — Treat like passwords; regenerate immediately if leaked
-- **SMTP credentials** — Use dedicated service account; never use personal/admin passwords
-- **Grafana sessions** — Run behind reverse proxy with rate limiting to prevent brute force
-- **Prometheus metrics** — May expose sensitive information; keep internal-only or behind authentication
+- Discord webhooks — Treat like passwords; regenerate immediately if leaked
+- SMTP credentials — Use dedicated service account; never use personal/admin passwords
+- Grafana sessions — Run behind reverse proxy with rate limiting to prevent brute force
+- Prometheus metrics — May expose sensitive information; keep internal-only or behind authentication
 
 ## See Also
 
