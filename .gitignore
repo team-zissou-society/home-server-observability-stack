@@ -1,0 +1,28 @@
+# Environment files — NEVER commit actual credentials
+.env
+.env.local
+.env.*.local
+
+# Data volumes
+prometheus_data/
+grafana_data/
+loki_data/
+alertmanager_data/
+uptime_kuma_data/
+
+# Logs
+logs/
+*.log
+
+# Editor/IDE files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+.project
+.settings/
