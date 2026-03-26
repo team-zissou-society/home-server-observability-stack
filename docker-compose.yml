@@ -76,8 +76,6 @@ services:
     devices:
       - /dev/kmsg
     command:
-      # - "--docker_only=true"
-      # - "--disable_metrics=advtcp,cpuLoad,cpu_topology,hugetlb,memory_numa,percpu,perf_event,process,referenced_memory,resctrl,sched,tcp,udp"
       - "--housekeeping_interval=15s"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]

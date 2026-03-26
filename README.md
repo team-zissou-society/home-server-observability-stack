@@ -26,21 +26,12 @@ This is a template for your own deployment. You will need to configure it with y
 
 - Docker Engine 24+ with Compose v2
 - NVIDIA Container Toolkit (optional, only if you have GPUs)
-- Python 3 or similar for running the compose-refresh script
-
-## Quick Start
-
-IMPORTANT: Before starting, follow these security steps:
-
-- Never commit `.env` to git — it's in `.gitignore` to prevent accidental secret exposure
-- Set strong passwords — change all placeholder values in `.env`
-- Rotate credentials if this repo was exposed — regenerate webhooks, passwords, SMTP credentials
 
 ### Setup Steps
 
 1. Clone or navigate to the observability stack directory:
    ```bash
-   cd observabillity_stack
+   cd home-server-observability_stack
    ```
 
 2. Create `.env` from the template:
@@ -76,72 +67,12 @@ IMPORTANT: Before starting, follow these security steps:
 | cAdvisor | http://localhost:8081 | none |
 | Loki | http://localhost:3100 | metrics/api only |
 
-## Directory Structure
-
-```
-observabillity_stack/
-├── docker-compose.yml              # Main service definitions
-├── .env.example                    # Environment variables template
-├── config/
-│   ├── prometheus/
-│   │   ├── prometheus.yml          # Prometheus scrape jobs
-│   │   └── alerts.yml              # Alert rules
-│   ├── alertmanager/
-│   │   └── alertmanager.yml        # Alert routing and receivers
-│   ├── loki/
-│   │   └── loki.yml                # Loki retention and storage
-│   └── promtail/
-│       └── promtail.yml            # Log collection sources
-└── README.md                       # This file
-```
-
 ## Configuration
-
-### Environment Variables (.env)
-
-```bash
-# Grafana
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=your_secure_password  # REQUIRED
-GRAFANA_DOMAIN=localhost
-GRAFANA_SMTP_ENABLED=false
-GRAFANA_SMTP_HOST=smtp.example.com
-GRAFANA_SMTP_USER=alerts@example.com
-GRAFANA_SMTP_PASSWORD=smtp_password
-GRAFANA_SMTP_FROM=alerts@example.com
-```
-
-### Prometheus Configuration (config/prometheus/prometheus.yml)
-
-Defines which services to scrape metrics from. By default includes:
-- Node Exporter (9100) — host metrics
-- cAdvisor (8081) — container metrics
-- DCGM Exporter (9400) — GPU metrics
-- Prometheus (9090) — self-monitoring
-
-Add additional scrape targets here.
-
-### Alert Rules (config/prometheus/alerts.yml)
-
-Contains alert rules for:
-- System alerts — high CPU, high memory, low disk space
-- Container alerts — restart loops, high CPU, high memory (with memory limit guard)
-- GPU alerts — NVENC overload, high temperature, high memory
-- Service alerts — targets down, Prometheus scrape failures
-
-Edit threshold values (e.g., CPU > 90%, memory > 90%) here.
 
 ### Alertmanager Routes (config/alertmanager/alertmanager.yml)
 
 Defines where alerts go (email, Slack, PagerDuty, webhooks, etc.). The base configuration sends to a null receiver; configure your actual notification channels here.
 
-### Loki Config (config/loki/loki.yml)
-
-Retention settings, compactor config, and storage backend. Default uses local filesystem storage at `/loki`.
-
-### Promtail Config (config/promtail/promtail.yml)
-
-Defines which logs to collect. By default collects Docker container logs and system logs.
 
 ## Grafana Dashboards
 
@@ -158,14 +89,6 @@ Recommended community dashboards to import:
 3. NVIDIA GPU Metrics (ID: 12239)
    - GPU utilization, VRAM, temperature, power draw
    - Only needed if you have NVIDIA GPUs
-
-### Importing Dashboards
-
-1. Go to Grafana → Dashboards (or + icon)
-2. Click Import
-3. Enter dashboard ID above
-4. Select Prometheus datasource
-5. Click Import
 
 ## Known Issues & Gotchas
 
@@ -249,16 +172,6 @@ Imported dashboards reference datasources by UID. If the UID doesn't match, pane
    docker compose logs alertmanager
    ```
 
-### Loki crashes on startup
-
-Check for the compactor error mentioned above. Verify `config/loki/loki.yml` includes:
-
-```yaml
-compactor:
-  retention_enabled: true
-  delete_request_store: filesystem
-```
-
 ### High memory usage
 
 Prometheus defaults to 30 days of metrics retention. Reduce with:
@@ -291,7 +204,7 @@ Docker volumes persist data. To reset a service:
 
 ```bash
 docker compose down prometheus
-docker volume rm observabillity_stack_prometheus_data
+docker volume rm observability_stack_prometheus_data
 docker compose up -d prometheus
 ```
 
@@ -305,38 +218,8 @@ At steady state with 20+ other Docker services running:
 - cAdvisor: ~5-10% CPU (heavily depends on number of containers/filesystems)
 - Node Exporter + DCGM Exporter: negligible
 
-## Security Notes
 
-### For Your Deployment
+## For Your Deployment
 
 - Change all `.env` values — the `.env.example` file contains placeholders, not real credentials
-- Grafana admin password — Set a strong password (16+ characters) in `.env` before first run
-- Disable Grafana sign-ups — `GF_USERS_ALLOW_SIGN_UP=false` (enabled by default) if exposed to network
-- Keep Prometheus/Alertmanager behind firewall — These should not be directly internet-exposed; use a reverse proxy (nginx, Traefik) with authentication
-- Use HTTPS for Grafana — Configure reverse proxy with TLS for production deployments
-- Rotate credentials regularly — Change Grafana password, regenerate Discord webhooks, rotate SMTP credentials
-
-### Secrets Management
-
-- `.env` file is in `.gitignore` — it will never be committed to git
-- Never commit actual credentials, API keys, or webhook URLs to the repository
-- For CI/CD, use Docker secrets or a secrets manager instead of `.env`
-- If you ever expose credentials accidentally:
-  1. Immediately rotate the credential
-  2. Regenerate API keys/webhooks
-  3. Force password change on affected services
-
-### External Services
-
-- Discord webhooks — Treat like passwords; regenerate immediately if leaked
-- SMTP credentials — Use dedicated service account; never use personal/admin passwords
-- Grafana sessions — Run behind reverse proxy with rate limiting to prevent brute force
 - Prometheus metrics — May expose sensitive information; keep internal-only or behind authentication
-
-## See Also
-
-- [Prometheus Documentation](https://prometheus.io/docs/)
-- [Grafana Documentation](https://grafana.com/docs/grafana/latest/)
-- [Loki Documentation](https://grafana.com/docs/loki/latest/)
-- [Alertmanager Documentation](https://prometheus.io/docs/alerting/latest/alertmanager/)
-- [CONTRIBUTING](CONTRIBUTING.md) — Guidelines for contributing to this project
